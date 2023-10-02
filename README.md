@@ -16,6 +16,40 @@ There are three mandatory features that you will need to implement:
 
 Before you start the assignment, make sure you `record`.
 
+## Code Structure and CMake
+
+You need to structure your code nicely according to what was discussed in A4. Also, you need to use
+CMake as the build system. We expect the following code structure.
+
+```bash
+  .
+  |-- CMakeLists.txt
+  |-- include
+  |   \-- *.h
+  \-- src
+      \-- *.c
+```
+
+* This repo already has `include/` that contains a header file, which you will use for this
+  assignment. You need to add your own header files there.
+* Under `src/`, you need to add all your `.c` files.
+* You also need to make sure that you use the correct C compiler with CMake. As mentioned earlier,
+  we use `clang` in this course, and the command below sets the C compiler for CMake to `clang`.
+  What it does is setting the environment variable `CC`, which various programs commonly use to find
+  the C compiler.
+
+  ```bash
+  $ export CC=$(which clang)
+  ```
+
+  Additionally, you can set the C++ compiler to `clang++` as well, though we do not need it for this
+  course. The command below sets the environment variable `CXX`, which is the environment variable
+  for C++ compiler.
+
+  ```bash
+  $ export CXX=$(which clang++)
+  ```
+
 ## Task 0: Basic Command Support
 
 The first feature you need to implement is executing programs that a user enters at the prompt. You
@@ -180,12 +214,14 @@ history list:
 
 ## Grading
 
-* Code that does not compile gets a 0.
+* Code that does not compile with CMake gets a 0.
 * Distribution
     * [30 points] Task 0
     * [30 points] Task 1
     * [30 points] Task 2
-    * [10 points] No memory issues
+    * [2 points] Code structure
+    * [3 points] Fuzzer
+    * [5 points] No memory issues
 
 ## Acknowledgment
 
