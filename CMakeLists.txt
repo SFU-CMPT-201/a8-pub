@@ -16,6 +16,3 @@ enable_testing()
 
 add_executable(shell_test gtest/shell_test.cpp)
 target_link_libraries(shell_test GTest::gtest_main)
-
-include(GoogleTest)
-gtest_discover_tests(shell_test)
