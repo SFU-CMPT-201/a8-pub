@@ -163,10 +163,10 @@ history list:
       12	ls
       11	man pthread_create
       10	cd /home/cmpt201
-      9	    ls
-      8	    ls -la
-      7	    echo Hello World from my shell!
-      6	    history
+      9		ls
+      8		ls -la
+      7		echo Hello World from my shell!
+      6		history
       /home/cmpt201$
       ```
 
