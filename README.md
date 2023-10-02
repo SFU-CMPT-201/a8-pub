@@ -26,29 +26,32 @@ CMake as the build system. We expect the following code structure.
   |-- CMakeLists.txt
   |-- include
   |   \-- *.h
+  |-- gtest
+  |   \-- (test source)
   \-- src
       \-- *.c
 ```
 
-* This repo already has `include/` that contains a header file, which you will use for this
-  assignment. You need to add your own header files there.
-* Under `src/`, you need to add all your `.c` files.
-* You also need to make sure that you use the correct C compiler with CMake. As mentioned earlier,
-  we use `clang` in this course, and the command below sets the C compiler for CMake to `clang`.
-  What it does is setting the environment variable `CC`, which various programs commonly use to find
-  the C compiler.
+* There is `include/` created already that contains a header file. You will use the header file for
+  this assignment. You need to add your own header files there.
+* You need to create `src/` and add all your `.c` files.
+* You need to make sure that you use the correct C and C++ compilers with CMake. As mentioned
+  earlier, we use `clang` in this course, and the command below sets the C and C++ compilers for
+  CMake to `clang` and `clang++`. What it does is setting the environment variables `CC` and `CXX`,
+  which various programs commonly use to find the C and C++ compilers.
 
   ```bash
   $ export CC=$(which clang)
-  ```
-
-  Additionally, you can set the C++ compiler to `clang++` as well, though we do not need it for this
-  course. The command below sets the environment variable `CXX`, which is the environment variable
-  for C++ compiler.
-
-  ```bash
   $ export CXX=$(which clang++)
   ```
+
+* There is `gtest/` created already that contains test cases. It is in fact our grader. When you run
+  it, you will get how many points you get. We use [Google
+  Test](https://github.com/google/googletest/tree/main) to develop and run the test cases.
+* There is `CMakeLists.txt` that includes directives to compile test cases. You can use regular
+  CMake commands to compile the test cases with your source, e.g., `cmake -S . -B build && cmake
+  --build build`.
+* To run the test cases, go into `build/` and run `ctest`.
 
 ## Task 0: Basic Command Support
 
