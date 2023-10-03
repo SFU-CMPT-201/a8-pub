@@ -15,6 +15,7 @@
 
 int input_fd[2];
 int fd[2];
+int err_fd[2];
 int externalScore = 0;
 int internalScore = 0;
 int historyScore = 0;
@@ -31,11 +32,16 @@ protected:
     saved_stdin = dup(fileno(stdin));
     dup2(input_fd[0], fileno(stdin));
 
+    pipe(err_fd);
+    saved_stderr = dup(fileno(stderr));
+    dup2(err_fd[0], fileno(stderr));
+
     // start the shell as a child process
     pid = fork();
     if (pid == 0) {
       close(input_fd[0]);
       close(fd[1]);
+      close(err_fd[1]);
       execl("./shell", "NULL", NULL);
     }
   }
@@ -43,12 +49,15 @@ protected:
   virtual void TearDown() {
     dup2(saved_stdout, fileno(stdout));
     dup2(saved_stdin, fileno(stdin));
+    dup2(saved_stderr, fileno(stderr));
 
     close(fd[0]);
+    close(err_fd[0]);
     kill(pid, SIGKILL);
   }
   int saved_stdout;
   int saved_stdin;
+  int saved_stderr;
   pid_t pid;
 };
 
@@ -87,28 +96,28 @@ int writeInput(const char *command, bool closePipe) {
   return 0;
 }
 
-std::string getOutput() {
+std::string getOutputInternal(int fd_internal) {
   std::string output;
   char buffer[1024];
 
   fd_set set;
   FD_ZERO(&set);
-  FD_SET(fd[0], &set);
+  FD_SET(fd_internal, &set);
 
   struct timeval timeout;
   timeout.tv_sec = 1;
   timeout.tv_usec = 0;
 
   while (true) {
-    int select_status = select(fd[0] + 1, &set, NULL, NULL, &timeout);
+    int select_status = select(fd_internal + 1, &set, NULL, NULL, &timeout);
     if (select_status == -1) {
       perror("Error in select");
       exit(1);
     } else if (select_status == 0) {
       break;
     } else {
-      if (FD_ISSET(fd[0], &set)) {
-        int n = read(fd[0], buffer, sizeof(buffer));
+      if (FD_ISSET(fd_internal, &set)) {
+        int n = read(fd_internal, buffer, sizeof(buffer));
         if (n == -1) {
           perror("Error reading from the pipe");
         }
@@ -118,6 +127,9 @@ std::string getOutput() {
   }
   return output;
 }
+
+std::string getOutput() { return getOutputInternal(fd[0]); }
+std::string getErrOutput() { return getOutputInternal(err_fd[0]); }
 
 std::string parsedOutput(std::string output) {
   std::string firstLine;
@@ -334,7 +346,7 @@ TEST_F(ShellTest, InvalidExecCommand) {
   int writeStatus = writeInput("la adf\n", true);
   if (writeStatus == -1)
     exit(1);
-  std::string output = getOutput();
+  std::string output = getErrOutput();
 
   std::istringstream iss(output);
   std::string firstLine;
@@ -356,7 +368,7 @@ TEST_F(ShellTest, TestInvalidCommand) {
   int writeStatus = writeInput("Invalid Command\n", true);
   if (writeStatus == -1)
     exit(1);
-  std::string output = getOutput();
+  std::string output = getErrOutput();
 
   std::istringstream iss(output);
   std::string firstLine;
@@ -394,7 +406,7 @@ TEST_F(ShellTest, PwdWithArgument) {
   if (writeStatus == -1)
     exit(1);
 
-  std::string output = getOutput();
+  std::string output = getErrOutput();
 
   char cwd[1024];
   if (getcwd(cwd, sizeof(cwd)) != NULL) {
@@ -565,7 +577,7 @@ TEST_F(ShellTest, CDInvalidArgument) {
   if (writeStatus == -1)
     exit(1);
 
-  std::string output = getOutput();
+  std::string output = getErrOutput();
 
   auto start = output.find("\n");
   if (start == std::string::npos) {
