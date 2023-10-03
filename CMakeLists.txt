@@ -16,3 +16,7 @@ enable_testing()
 
 add_executable(shell_test gtest/shell_test.cpp)
 target_link_libraries(shell_test GTest::gtest_main)
+
+include_directories(include)
+file(GLOB SOURCES "src/*.c")
+add_executable(shell ${SOURCES})

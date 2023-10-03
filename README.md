@@ -16,7 +16,7 @@ There are three mandatory features that you will need to implement:
 
 Before you start the assignment, make sure you `record`.
 
-## Code Structure and CMake
+## Code Structure, CMake, and the Grader
 
 You need to structure your code nicely according to what was discussed in A4. Also, you need to use
 CMake as the build system. We expect the following code structure.
@@ -32,12 +32,12 @@ CMake as the build system. We expect the following code structure.
       \-- *.c
 ```
 
-* There is `include/` created already that contains a header file. You will use the header file for
-  this assignment. You need to add your own header files there.
+* `include/` contains a header file. You will use the header file for this assignment. Also, you
+  need to add your own header files there.
 * You need to create `src/` and add all your `.c` files.
-* You need to make sure that you use the correct C and C++ compilers with CMake. As mentioned
-  earlier, we use `clang` in this course, and the command below sets the C and C++ compilers for
-  CMake to `clang` and `clang++`. What it does is setting the environment variables `CC` and `CXX`,
+* You need to make sure that you use the correct C and C++ compilers with CMake. As you know
+  already, we use `clang` in this course, and the commands below set the C and C++ compilers for
+  CMake to `clang` and `clang++`. What they do is setting the environment variables `CC` and `CXX`,
   which various programs commonly use to find the C and C++ compilers.
 
   ```bash
@@ -45,13 +45,18 @@ CMake as the build system. We expect the following code structure.
   $ export CXX=$(which clang++)
   ```
 
-* There is `gtest/` created already that contains test cases. It is in fact our grader. When you run
-  it, you will get how many points you get. We use [Google
+* `gtest/` contains the test cases for grading. We use [Google
   Test](https://github.com/google/googletest/tree/main) to develop and run the test cases.
-* There is `CMakeLists.txt` that includes directives to compile test cases. You can use regular
-  CMake commands to compile the test cases with your source, e.g., `cmake -S . -B build && cmake
-  --build build`.
-* To run the test cases, go into `build/` and run `ctest`.
+* `CMakeLists.txt` includes directives to compile the test cases.
+* To run the test cases, take a look at `CMakeLists.txt` and see which executable it generates. When
+  you run the executable for the test cases, you will see how many points you get at the end.
+* The test cases expect that there is an executable named `shell` in the build directory. Thus, you
+  need to edit `CMakeLists.txt` to generate `shell` from your code. You can use `shell` for your own
+  manual testing during development.
+* The test cases expect that regular messages/outputs go to the standard output stream and error
+  messages/outputs go to the standard error stream. You need to use these streams appropriately.
+* You should be able to use regular CMake commands to generate the executable for test cases as well
+  as `shell`, e.g., `cmake -S . -B build && cmake --build build`.
 
 ## Task 0: Basic Command Support
 
@@ -68,8 +73,8 @@ modes of execution for external programs.
 
 There are a few things to keep in mind.
 
-* You need to show a simple prompt using this string: `"$ "`. It should be printed out to the
-  standard output stream.
+* For all error messages, *use the macros defined in `msgs.h` for correct formatting*.
+* You need to show a simple prompt using this string: `"$ "`.
 * For foreground execution, you need to wait for the exact process you fork and not for any other
   processes.
 * Since we do not wait for a background process to terminate, it can become a zombie process. Thus,
@@ -84,12 +89,53 @@ There are a few things to keep in mind.
     * Remember that there can be multiple background processes launched previously. Thus, a single
       call will not clean up all of them. You need to use a loop to clean up all zombie processes.
 * For input/output, use `read()` and `write()` since we need to handle a signal in the next task.
-  Other functions like `printf()` do not play nicely with signals.
+  Other functions like `printf()` do not play nicely with signals. To see the list of functions safe
+  for use with signals, run `man signal-safety`.
+* If you encounter an error when reading a user command with `read()`, you need to print out this
+  error message: `shell: unable to read command`.
+* If `fork()` fails, print out this error message: `shell: unable to fork`.
+* If `exec` fails, print out this error message: `shell: unable to execute command`.
+* If `wait` fails, print out this error message: `shell: unable to wait for child`.
 
 ## Task 1: Shell Prompt, Internal Commands, and SIGINT
 
 The second task is to implement a shell prompt and some internal commands.
 
+* Your shell should implement a few internal commands described below. Internal commands are
+  built-in commands of the shell itself, as opposed to a separate program that is executed. You
+  should not fork new processes for internal commands as they are built-in. All the commands should
+  be *case-sensitive*. For all error messages, use the macros defined in `msgs.h` for correct
+  formatting.
+    * `exit`: Exit the shell program. If the user provides any argument, abort the operation and
+      print out this error message: `exit: too many arguments`.
+    * `pwd`: Display the current working directory. Use the `getcwd()` function. If `getcwd()`
+      returns an error, display this error message: `pwd: unable to get current directory`. If the
+      user provides any argument, abort the operation and print out this error message: `pwd: too
+      many arguments`.
+    * `cd`: Change the current working directory. Use the `chdir()` function. If `chdir()` returns
+      an error, display this error message `cd: unable to change directory`. If the user passed in
+      more than one argument, abort the operation and print out this error message: `cd: too many
+      arguments`. Additionally, implement the following features:
+        * Change to the home directory if no argument is provided.
+        * Support `~` for the home folder. For example, `cd ~/cmpt201` should change to the
+          `cmpt201` directory under the current user's home directory. Issuing `cd ~` should switch
+          to the home directory.
+        * Support `-` for changing back to the previous directory. For example, suppose that the
+          current working directory is `/home` and you issued `cd /` to change to the root
+          directory. Then, `cd -` should switch back to the `/home` directory.
+        * You may find the `getuid()` and `getpwuid()` functions useful. They allow you to gather
+          useful information about the current user.
+    * `help`: Display help information on internal commands.
+        * If the first argument is one of the internal commands, print out the command and the help
+          message. For example, if the command is `cd`, print out `cd: change the current
+          directory`.
+        * If the first argument is not an internal command, print out the program name and the help
+          message. For example, if argument is `ls`, print out `ls: external command or
+          application`.
+        * If there is more than one argument, display this error message: `help: too many
+          arguments`.
+        * If there is no argument provided, list all the supported internal commands one by one with
+          their corresponding help messages.
 * Your shell prompt should always show the current working directory. For example, if the user is in
   the `/home/cmpt201` folder, the prompt should be:
 
@@ -97,56 +143,25 @@ The second task is to implement a shell prompt and some internal commands.
   /home/cmpt201$
   ```
 
-* Your shell should implement a few internal commands described below. Internal commands are
-  built-in commands of the shell itself, as opposed to a separate program that is executed. You
-  should not fork new processes for internal commands as they are built-in. All the commands should
-  be *case-sensitive*. For all error messages, *use the macros defined in `msgs.h` for correct
-  formatting* and print out to the *standard error* stream.
-    * `exit`: Exit the shell program. If the user provides any argument, abort the operation and
-      print out this error message: `exit: too many arguments`.
-    * `pwd`: Display the current working directory. Use the `getcwd()` function. If `getcwd()`
-      returns an error, display the error message using `perror("pwd")`. If the user provides any
-      argument, abort the operation and print out this error message: `pwd: too many arguments`.
-    * `cd`: Change the current working directory. Use the `chdir()` function. If `chdir()` returns
-      an error, display the error message using `perror("cd")`. If the user passed in more than one
-      argument, abort the operation and print out this error message: `cd: too many arguments`.
-      Additionally, implement the following features:
-        * Change to the home directory if no argument is provided.
-        * Support `~` for the home folder. For example, `cd ~/cmpt201` should change to the
-          "cmpt201" directory under the current user's home directory. Issuing `cd ~` will switch to
-          the home directory.
-        * Support `-` for changing back to the previous directory. For example, suppose that the
-          current working directory is `/home` and you issued `cd /` to change to the root
-          directory. Then, `cd -` will switch back to the `/home` directory.
-        * You may find the `getuid()` and `getpwuid()` functions useful. They allow you to gather
-          useful information about the current user.
-    * `help`: Display help information on internal commands.
-        * If the first argument is one of the internal commands, use the macros in `msgs.h` to print
-          out the command and the help message to the standard output stream. For example, if the
-          command is `cd`, print out `cd: change the current directory`.
-        * If the first argument is not an internal command, use the macros in `msgs.h` to print out
-          the program name and the help message to the standard output stream. For example, if
-          argument is `ls`, print out `ls: external command or application`.
-        * If there is more than one argument, display this error message: `help: too many
-          arguments`.
-        * If there is no argument provided, list all the supported internal commands one by one with
-          their corresponding help messages.
+  If you cannot get the current directory, you should print out this error message: `shell: unable
+  to get current directory`
 * Your shell should not terminate when a user presses `CTRL-C`. Thus, you need to write a signal
   handler for `SIGINT`.
     * Have the signal handler display the help information (same as the `help` command).
     * Then re-display the command-prompt before returning.
     * A user can press `CTRL-C` anytime and interrupt system calls that are being executed. Thus,
-      you need to properly check the return value of a system call and also check `errno`. More
-      specifically, you need to understand which value `errno` gets when a signal interrupts a
-      system call. You need to differentiate signal interrupts from regular errors.
+      you need to properly check the return value of a system call to check if there was an error
+      and also check `errno` to check which error it was. More specifically, you need to understand
+      which value `errno` is the error was because of `SIGINT`. You need to handle `SIGINT` errors
+      differently from other errors.
 
 ## Task 2: History Feature
 
 The next task is to modify your shell to provide a history feature that allows the user access up to
 the 10 most recently entered commands. Start numbering the user's commands at 0 and increment for
 each command entered. These numbers will grow past 9. For example, if the user has entered 35
-commands, then the most recent 10 will be numbered 15 through 34. For all error messages, *use the
-macros defined in `msgs.h` for correct formatting* and print out to the *standard error* stream.
+commands, then the most recent 10 will be numbered 15 through 34. For all error messages, use the
+macros defined in `msgs.h` for correct formatting.
 
 * First, implement an internal command `history` which displays the 10 most recent commands executed
   in the shell. If there are less than 10 commands entered, display all the commands entered so far.
@@ -154,8 +169,8 @@ macros defined in `msgs.h` for correct formatting* and print out to the *standar
     * The output should include both external application commands and internal commands.
     * Display the command number on the left, and the command (with all its arguments) on the right.
         * Use the macros in `msgs.h`.
-        * If the command is run in the background using `&`, it must be added to the history with the
-          `&`.
+        * If the command is run in the background using `&`, it must be added to the history with
+          the `&`.
     * A sample output of the history command is shown below:
 
       ```bash
@@ -174,7 +189,7 @@ macros defined in `msgs.h` for correct formatting* and print out to the *standar
       ```
 
 * Next, implement the `!` and related commands which allows users to run commands directly from the
-history list:
+  history list:
     * Command `!n` runs command number n. For example, `!22` re-runs the 23rd command in the
       history. In the above example, this will re-run the echo command.
         * If n is not a number, or an invalid value (not one of the previous 10 command numbers)
