@@ -24,25 +24,34 @@ int extraCredit = 0;
 class ShellTest : public ::testing::Test {
 protected:
   virtual void SetUp() {
-    pipe(fd);
-    saved_stdout = dup(fileno(stdout));
-    dup2(fd[1], fileno(stdout));
-
     pipe(input_fd);
-    saved_stdin = dup(fileno(stdin));
-    dup2(input_fd[0], fileno(stdin));
-
+    pipe(fd);
     pipe(err_fd);
-    saved_stderr = dup(fileno(stderr));
-    dup2(err_fd[0], fileno(stderr));
 
     // start the shell as a child process
     pid = fork();
     if (pid == 0) {
+      saved_stdin = dup(fileno(stdin));
+      dup2(input_fd[0], fileno(stdin));
+
+      saved_stdout = dup(fileno(stdout));
+      dup2(fd[1], fileno(stdout));
+
+      saved_stderr = dup(fileno(stderr));
+      dup2(err_fd[1], fileno(stderr));
+
       close(input_fd[0]);
       close(fd[1]);
       close(err_fd[1]);
+
       execl("./shell", "NULL", NULL);
+    } else if (pid > 0) {
+      close(input_fd[0]);
+      close(fd[1]);
+      close(err_fd[1]);
+    } else {
+      perror("fork");
+      exit(1);
     }
   }
 
@@ -51,6 +60,7 @@ protected:
     dup2(saved_stdin, fileno(stdin));
     dup2(saved_stderr, fileno(stderr));
 
+    close(input_fd[1]);
     close(fd[0]);
     close(err_fd[0]);
     kill(pid, SIGKILL);
@@ -1234,9 +1244,9 @@ int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);
   int result = RUN_ALL_TESTS();
   std::cout << "External: " << externalScore << std::endl;
-  std::cout << "Internal: " << internalScore << std::endl;
+  std::cout << "Internal: " << internalScore + extraCredit << std::endl;
   std::cout << "History: " << historyScore << std::endl;
-  std::cout << "Extra Credit: " << extraCredit << std::endl;
+  // std::cout << "Extra Credit: " << extraCredit << std::endl;
   int total = externalScore + internalScore + historyScore + extraCredit;
   std::cout << "Final score: " << total << std::endl;
   return result;
