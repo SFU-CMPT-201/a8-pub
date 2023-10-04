@@ -28,15 +28,15 @@ protected:
     pipe(fd);
     pipe(err_fd);
 
+    saved_stdin = dup(fileno(stdin));
+    dup2(input_fd[0], fileno(stdin));
+
+    saved_stdout = dup(fileno(stdout));
+    dup2(fd[1], fileno(stdout));
+
     // start the shell as a child process
     pid = fork();
     if (pid == 0) {
-      saved_stdin = dup(fileno(stdin));
-      dup2(input_fd[0], fileno(stdin));
-
-      saved_stdout = dup(fileno(stdout));
-      dup2(fd[1], fileno(stdout));
-
       saved_stderr = dup(fileno(stderr));
       dup2(err_fd[1], fileno(stderr));
 
