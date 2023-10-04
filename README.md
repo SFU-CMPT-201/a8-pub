@@ -106,8 +106,8 @@ The second task is to implement a shell prompt and some internal commands.
   should not fork new processes for internal commands as they are built-in. All the commands should
   be *case-sensitive*. For all error messages, use the macros defined in `msgs.h` for correct
   formatting.
-    * `exit`: Exit the shell program. If the user provides any argument, abort the operation and
-      print out this error message: `exit: too many arguments`.
+    * `exit`: Exit the shell program. If the user provides any argument, abort the operation (i.e.,
+      do not exit) and print out this error message: `exit: too many arguments`.
     * `pwd`: Display the current working directory. Use the `getcwd()` function. If `getcwd()`
       returns an error, display this error message: `pwd: unable to get current directory`. If the
       user provides any argument, abort the operation and print out this error message: `pwd: too
@@ -122,7 +122,8 @@ The second task is to implement a shell prompt and some internal commands.
           to the home directory.
         * Support `-` for changing back to the previous directory. For example, suppose that the
           current working directory is `/home` and you issued `cd /` to change to the root
-          directory. Then, `cd -` should switch back to the `/home` directory.
+          directory. Then, `cd -` should switch back to use the macros in `msgs.h` to the `/home`
+          directory.
         * You may find the `getuid()` and `getpwuid()` functions useful. They allow you to gather
           useful information about the current user.
     * `help`: Display help information on internal commands.
