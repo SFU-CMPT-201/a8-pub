@@ -352,44 +352,40 @@ TEST_F(ShellTest, InvalidExecCommand) {
 
   std::string expected_output = getcwd(NULL, 0);
   expected_output += "$ ";
+  expected_output += expected_output;
 
   int writeStatus = writeInput("la adf\n", true);
   if (writeStatus == -1)
     exit(1);
-  std::string output = getErrOutput();
 
-  std::istringstream iss(output);
-  std::string firstLine;
-  std::string secondLine;
-  std::getline(iss, firstLine);
-  std::getline(iss, secondLine);
+  std::string output = getOutput();
+  std::string errLine = getErrOutput();
 
-  ASSERT_TRUE(parsedOutput(firstLine).size() != 0);
-  ASSERT_TRUE(secondLine == expected_output);
-  adjustScore(parsedOutput(firstLine).size() != 0, 2, externalScore);
-  adjustScore(secondLine == expected_output, 2, externalScore);
+  ASSERT_TRUE(output == expected_output);
+  ASSERT_TRUE(errLine == "shell: unable to execute command\n");
+  adjustScore(output == expected_output, 2, externalScore);
+  adjustScore(errLine == "shell: unable to execute command\n", 2,
+              externalScore);
 }
 
 TEST_F(ShellTest, TestInvalidCommand) {
 
   std::string expected_output = getcwd(NULL, 0);
   expected_output += "$ ";
+  expected_output += expected_output;
 
   int writeStatus = writeInput("Invalid Command\n", true);
   if (writeStatus == -1)
     exit(1);
-  std::string output = getErrOutput();
 
-  std::istringstream iss(output);
-  std::string firstLine;
-  std::string secondLine;
-  std::getline(iss, firstLine);
-  std::getline(iss, secondLine);
+  std::string output = getOutput();
+  std::string errLine = getErrOutput();
 
-  ASSERT_TRUE(parsedOutput(firstLine).size() != 0);
-  ASSERT_TRUE(expected_output == secondLine);
-  adjustScore(parsedOutput(firstLine).size() != 0, 2, externalScore);
-  adjustScore(expected_output == secondLine, 2, externalScore);
+  ASSERT_TRUE(expected_output == output);
+  ASSERT_TRUE(errLine == "shell: unable to execute command\n");
+  adjustScore(expected_output == output, 2, externalScore);
+  adjustScore(errLine == "shell: unable to execute command\n", 2,
+              externalScore);
 }
 
 /* -------------------------- Internal Tests ----------------------------- */
@@ -416,14 +412,10 @@ TEST_F(ShellTest, PwdWithArgument) {
   if (writeStatus == -1)
     exit(1);
 
-  std::string output = getErrOutput();
+  std::string errLine = getErrOutput();
 
-  char cwd[1024];
-  if (getcwd(cwd, sizeof(cwd)) != NULL) {
-    std::string expected_output = cwd;
-    adjustScore(parsedOutput(output) != expected_output, 2, internalScore);
-    EXPECT_NE(parsedOutput(output), expected_output);
-  }
+  ASSERT_TRUE(errLine == "pwd: too many arguments\n");
+  adjustScore(errLine == "pwd: too many arguments\n", 2, internalScore);
 }
 
 TEST_F(ShellTest, PathPrompt) {
@@ -491,26 +483,10 @@ TEST_F(ShellTest, ExitWithArgument) {
   if (writeStatus == -1)
     exit(1);
 
-  // wait for the shell to finish executing with a timeout of 1 second
-  int status;
-  int timeout = 1;
-  int ret = waitpid(pid, &status, WNOHANG);
-  while (ret == 0 && timeout > 0) {
-    sleep(1);
-    timeout--;
-    ret = waitpid(pid, &status, WNOHANG);
-  }
+  std::string errLine = getErrOutput();
 
-  if (ret != 0)
-    EXPECT_TRUE(false) << "Shell exited with an invalid argument period";
-
-  // Exit status of the shell program
-  if (!WIFEXITED(status)) {
-    adjustScore(true, 2, internalScore);
-    EXPECT_NE(WEXITSTATUS(status), 0);
-  } else {
-    EXPECT_TRUE(false) << "Shell exited with an invalid argument";
-  }
+  ASSERT_TRUE(errLine == "exit: too many arguments\n");
+  adjustScore(errLine == "exit: too many arguments\n", 2, internalScore);
 }
 
 TEST_F(ShellTest, CdForward) {
@@ -576,29 +552,14 @@ TEST_F(ShellTest, CdBackward) {
 }
 
 TEST_F(ShellTest, CDInvalidArgument) {
-
-  char cwd[1024];
-  if (getcwd(cwd, sizeof(cwd)) == NULL) {
-    // getCwd failed
-  }
-  std::string expected_output = cwd;
-
   int writeStatus = writeInput("cd sgdrerg\n", true);
   if (writeStatus == -1)
     exit(1);
 
-  std::string output = getErrOutput();
+  std::string errLine = getErrOutput();
 
-  auto start = output.find("\n");
-  if (start == std::string::npos) {
-    std::cerr << "Failed to find '$' in output" << std::endl;
-    exit(1);
-  }
-
-  output = output.substr(start + 1);
-
-  adjustScore(output == expected_output + "$ ", 2, internalScore);
-  EXPECT_EQ(output, expected_output + "$ ");
+  ASSERT_TRUE(errLine == "cd: unable to change directory\n");
+  adjustScore(errLine == "cd: unable to change directory\n", 2, internalScore);
 }
 
 TEST_F(ShellTest, InternalHelpCommand) {
@@ -1103,21 +1064,13 @@ TEST_F(ShellTest, CtrlCNoCrash) {
   // Exit status of the shell program
   if (!WIFEXITED(status)) {
     adjustScore(true, 2, historyScore);
-    EXPECT_NE(WEXITSTATUS(status), 0);
+    EXPECT_NE(WEXITSTATUS(status), true);
   } else {
     EXPECT_TRUE(false) << "Shell exited";
   }
 }
 
-/* -------------------------- Extra Credit Tests -----------------------------
- */
-
-// Extra Credit
 TEST_F(ShellTest, CDWithoutArgument) {
-
-  if (internalScore + externalScore + historyScore < 80)
-    GTEST_SKIP();
-
   std::string output;
   std::string home_path;
 
@@ -1137,10 +1090,6 @@ TEST_F(ShellTest, CDWithoutArgument) {
 }
 
 TEST_F(ShellTest, CDHome) {
-
-  if (internalScore + externalScore + historyScore < 80)
-    GTEST_SKIP();
-
   std::string output;
   std::string home_path;
 
@@ -1159,12 +1108,7 @@ TEST_F(ShellTest, CDHome) {
   ASSERT_TRUE(output.find(home_path) != std::string::npos);
 }
 
-// Extra Credit
 TEST_F(ShellTest, ChangeToHomeDirectory) {
-
-  if (internalScore + externalScore + historyScore < 80)
-    GTEST_SKIP();
-
   std::string output;
   std::string home_path = getenv("HOME");
   std::string directory_path = home_path + "/testdir";
@@ -1195,12 +1139,7 @@ TEST_F(ShellTest, ChangeToHomeDirectory) {
   ASSERT_TRUE(remove == 0);
 }
 
-// Extra Credit
 TEST_F(ShellTest, cdBack) {
-
-  if (internalScore + externalScore + historyScore < 80)
-    GTEST_SKIP();
-
   std::string output;
   std::string prev_path;
   std::string intermediate;
