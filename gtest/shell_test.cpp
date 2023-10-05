@@ -363,7 +363,7 @@ TEST_F(ShellTest, InvalidExecCommand) {
   ASSERT_TRUE(output == expected_output);
   ASSERT_TRUE(errLine == "shell: unable to execute command\n");
   adjustScore(output == expected_output, 2, externalScore);
-  adjustScore(errLine == "shell: unable to execute command\n", 2,
+  adjustScore(errLine == "shell: unable to execute command\n", 3,
               externalScore);
 }
 
