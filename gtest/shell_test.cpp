@@ -19,7 +19,6 @@ int err_fd[2];
 int externalScore = 0;
 int internalScore = 0;
 int historyScore = 0;
-int extraCredit = 0;
 
 class ShellTest : public ::testing::Test {
 protected:
@@ -196,7 +195,7 @@ TEST_F(ShellTest, TestFork) {
 
   pclose(ps);
 
-  adjustScore(size == 2, 4, externalScore);
+  adjustScore(size == 2, 5, externalScore);
 
   EXPECT_EQ(size, 2);
 }
@@ -255,7 +254,7 @@ TEST_F(ShellTest, TestForkInBackground) {
 
   pclose(ps);
 
-  adjustScore(size == 5, 4, externalScore);
+  adjustScore(size == 5, 5, externalScore);
 
   EXPECT_EQ(size, 5);
 }
@@ -304,7 +303,7 @@ TEST_F(ShellTest, TestForkMixed) {
 
   pclose(ps);
 
-  adjustScore(size == 3, 4, externalScore);
+  adjustScore(size == 3, 5, externalScore);
 
   EXPECT_EQ(size, 3);
 }
@@ -343,7 +342,7 @@ TEST_F(ShellTest, TestWait) {
 
   pclose(ps);
 
-  adjustScore(size == 2, 4, externalScore);
+  adjustScore(size == 2, 5, externalScore);
 
   EXPECT_EQ(size, 2);
 }
@@ -1085,7 +1084,7 @@ TEST_F(ShellTest, CDWithoutArgument) {
   output = getOutput();
   home_path = getenv("HOME");
 
-  adjustScore(output.find(home_path) != std::string::npos, 3, extraCredit);
+  adjustScore(output.find(home_path) != std::string::npos, 3, internalScore);
   ASSERT_TRUE(output.find(home_path) != std::string::npos);
 }
 
@@ -1104,7 +1103,7 @@ TEST_F(ShellTest, CDHome) {
   output = getOutput();
   home_path = getenv("HOME");
 
-  adjustScore(output.find(home_path) != std::string::npos, 3, extraCredit);
+  adjustScore(output.find(home_path) != std::string::npos, 3, internalScore);
   ASSERT_TRUE(output.find(home_path) != std::string::npos);
 }
 
@@ -1132,7 +1131,7 @@ TEST_F(ShellTest, ChangeToHomeDirectory) {
   std::cout << expected_output << std::endl;
 
   adjustScore(output.find(expected_output) != std::string::npos, 4,
-              extraCredit);
+              internalScore);
   ASSERT_TRUE(output.find(expected_output) != std::string::npos);
 
   int remove = rmdir(directory_path.c_str());
@@ -1175,7 +1174,7 @@ TEST_F(ShellTest, cdBack) {
   output = output.substr(0, end);
 
   adjustScore(output.find(parsedOutput(prev_path)) != std::string::npos, 5,
-              extraCredit);
+              internalScore);
   ASSERT_TRUE(output.find(parsedOutput(prev_path)) != std::string::npos);
 }
 
@@ -1183,10 +1182,9 @@ int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);
   int result = RUN_ALL_TESTS();
   std::cout << "External: " << externalScore << std::endl;
-  std::cout << "Internal: " << internalScore + extraCredit << std::endl;
+  std::cout << "Internal: " << internalScore << std::endl;
   std::cout << "History: " << historyScore << std::endl;
-  // std::cout << "Extra Credit: " << extraCredit << std::endl;
-  int total = externalScore + internalScore + historyScore + extraCredit;
+  int total = externalScore + internalScore + historyScore;
   std::cout << "Final score: " << total << std::endl;
   return result;
 }
