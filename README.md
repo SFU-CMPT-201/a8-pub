@@ -22,7 +22,7 @@ You need to structure your code nicely according to what was discussed in A4. Al
 CMake as the build system. We expect the following code structure.
 
 ```bash
-  .
+  a9
   |-- CMakeLists.txt
   |-- include
   |   \-- *.h
@@ -32,8 +32,8 @@ CMake as the build system. We expect the following code structure.
       \-- *.c
 ```
 
-* `include/` contains a header file. You will use the header file for this assignment. Also, you
-  need to add your own header files there.
+* `include/` contains a header file already. You will use the header file for this assignment. Also,
+  you need to add your own header files there.
 * You need to create `src/` and add all your `.c` files.
 * You need to make sure that you use the correct C and C++ compilers with CMake. As you know
   already, we use `clang` in this course, and the commands below set the C and C++ compilers for
@@ -47,16 +47,30 @@ CMake as the build system. We expect the following code structure.
 
 * `gtest/` contains the test cases for grading. We use [Google
   Test](https://github.com/google/googletest/tree/main) to develop and run the test cases.
-* `CMakeLists.txt` includes directives to compile the test cases.
-* To run the test cases, take a look at `CMakeLists.txt` and see which executable it generates. When
-  you run the executable for the test cases, you will see how many points you get at the end.
-* The test cases expect that there is an executable named `shell` in the build directory. Thus, you
-  need to edit `CMakeLists.txt` to generate `shell` from your code. You can use `shell` for your own
-  manual testing during development.
+* `CMakeLists.txt` includes directives to compile the test cases. However, this `CMakeLists.txt` is
+  not complete and `cmake` won't work. You need to add more directives to make it work. What you
+  have learned from A4 should be enough to do it.
+* After you make `cmake` work, you can run the executable it generates to run the test cases. At the
+  end of each run, you will see how many points you get.
+* The test cases expect that there is an executable named `shell` in the build directory. That is
+  the executable that you need to produce for your shell. Thus, you need to edit `CMakeLists.txt` to
+  generate `shell` from your code. You can use `shell` for your own manual testing during
+  development as well.
 * The test cases expect that regular messages/outputs go to the standard output stream and error
   messages/outputs go to the standard error stream. You need to use these streams appropriately.
 * You should be able to use regular CMake commands to generate the executable for test cases as well
   as `shell`, e.g., `cmake -S . -B build && cmake --build build`.
+* Remember that test cases provide an input and check the output, and they do nothing more than
+  that. If a test case fails for you, go to the test case source, find out the input it uses and the
+  output it expects, and start your own debugging process with the input. It is *your job* to figure
+  out which test case fails and which part of the source you need to look at.
+* The test cases are *not* exactly the same as what we run for our own grading. This is to prevent
+  you from hard-coding or customizing your implementation tailored to our test cases. For example,
+  to test an invalid command, we use a particular invalid command in the test source. This is not
+  exactly the same as what we use for our own grading. Generally, you should consider the provided
+  test cases as examples or specific instances of general cases.
+* Still rest assured---if you do not hard-code or customize your implementation tailored to our test
+  cases, what you get from running the test cases will indeed be what you get in the end.
 
 ## Task 0: Basic Command Support
 
@@ -226,16 +240,16 @@ macros defined in `msgs.h` for correct formatting.
 ## Other Requirements and Exceptions
 
 * Your code must not have any memory leaks or memory access errors. Use appropriate sanitizers and
-  test to make sure you do not leak any memory.
-* Your shell must free all memory before it exits. However, your child processes may exit without
-  freeing all their memory. You do not need to handle such cases.
+  test your code to make sure you do not have any memory issues.
+* Your child processes may exit without freeing all their memory. You do not need to handle such
+  cases.
 * You do not need to support either `>` (output redirection) or `|` (pipe).
 
 ## Grading
 
 * Code that does not compile with CMake gets a 0.
-* Memory issues have a penalty of -10.
-* A wrong code structure has a penalty of -10.
+* Memory issues have a penalty of -10 pts.
+* A wrong code directory structure has a penalty of -10 pts.
 * Distribution
     * [29 points] Task 0
     * [39 points] Task 1
