@@ -234,13 +234,12 @@ macros defined in `msgs.h` for correct formatting.
 ## Grading
 
 * Code that does not compile with CMake gets a 0.
+* Memory issues have a penalty of -10.
+* A wrong code structure has a penalty of -10.
 * Distribution
-    * [30 points] Task 0
-    * [30 points] Task 1
-    * [30 points] Task 2
-    * [2 points] Code structure
-    * [3 points] Fuzzer
-    * [5 points] No memory issues
+    * [29 points] Task 0
+    * [39 points] Task 1
+    * [32 points] Task 2
 
 ## Acknowledgment
 
