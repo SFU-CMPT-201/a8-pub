@@ -72,7 +72,7 @@ CMake as the build system. We expect the following code structure.
 * Still rest assured---if you do not hard-code or customize your implementation tailored to our test
   cases, what you get from running the test cases will indeed be what you get in the end.
 
-## Task 0: Basic Command Support
+## Task 0: Shell Prompt & Basic Command Support
 
 The first feature you need to implement is executing programs that a user enters at the prompt. You
 need to use the necessary system calls appropriately to implement this feature. Of course, you need
@@ -88,13 +88,22 @@ modes of execution for external programs.
 There are a few things to keep in mind.
 
 * For all error messages, *use the macros defined in `msgs.h` for correct formatting*.
-* You need to show a simple prompt using this string: `"$ "`.
+* Your shell prompt should always show the current working directory. For example, if the user is in
+  the `/home/cmpt201` folder, the prompt should be:
+
+  ```bash
+  /home/cmpt201$
+  ```
+
+  Use the `getcwd()` function to get the current directory. If `getcwd()` returns an error, display
+  this error message: `shell: unable to get current directory`.
 * For foreground execution, you need to wait for the exact process you fork and not for any other
   processes.
-* Since we do not wait for a background process to terminate, it can become a zombie process. Thus,
-  your shell should still wait on it *at some point* to clean it up. There are many ways to achieve
-  this, but for this assignment, you can make an *additional* `waitpid()` call every time a user
-  enters a command. The following are some hints.
+* Since we do not wait for a background process to terminate, it can become a zombie process (where
+  a child process terminates but the parent process doesn't wait on it). Thus, your shell should
+  still wait on it *at some point* to clean it up. There are many ways to achieve this, but for this
+  assignment, you can make an *additional* `waitpid()` call every time a user enters a command. The
+  following are some hints.
     * This `waitpid()` call should wait on *any child process* since you're cleaning up zombie
       processes. Use an appropriate `pid` for that.
     * This `waitpid()` call should *return immediately if no child has exited*. Use an appropriate
@@ -111,7 +120,7 @@ There are a few things to keep in mind.
 * If `exec` fails, print out this error message: `shell: unable to execute command`.
 * If `wait` fails, print out this error message: `shell: unable to wait for child`.
 
-## Task 1: Shell Prompt, Internal Commands, and SIGINT
+## Task 1: Internal Commands and SIGINT
 
 The second task is to implement a shell prompt and some internal commands.
 
@@ -151,15 +160,6 @@ The second task is to implement a shell prompt and some internal commands.
           arguments`.
         * If there is no argument provided, list all the supported internal commands one by one with
           their corresponding help messages.
-* Your shell prompt should always show the current working directory. For example, if the user is in
-  the `/home/cmpt201` folder, the prompt should be:
-
-  ```bash
-  /home/cmpt201$
-  ```
-
-  If you cannot get the current directory, you should print out this error message: `shell: unable
-  to get current directory`
 * Your shell should not terminate when a user presses `CTRL-C`. Thus, you need to write a signal
   handler for `SIGINT`.
     * Have the signal handler display the help information (same as the `help` command).
