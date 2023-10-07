@@ -101,9 +101,9 @@ There are a few things to keep in mind.
   processes.
 * Since we do not wait for a background process to terminate, it can become a zombie process (where
   a child process terminates but the parent process doesn't wait on it). Thus, your shell should
-  still wait on it *at some point* to clean it up. There are many ways to achieve this, but for this
-  assignment, you can make an *additional* `waitpid()` call every time a user enters a command. The
-  following are some hints.
+  still wait on each background child process *at some point* to clean it up. There are many ways to
+  achieve this, but for this assignment, you can make an *additional* `waitpid()` call every time a
+  user enters a command. The following are some hints.
     * This `waitpid()` call should wait on *any child process* since you're cleaning up zombie
       processes. Use an appropriate `pid` for that.
     * This `waitpid()` call should *return immediately if no child has exited*. Use an appropriate
