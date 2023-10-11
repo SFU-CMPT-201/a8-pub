@@ -145,8 +145,7 @@ The second task is to implement a shell prompt and some internal commands.
           to the home directory.
         * Support `-` for changing back to the previous directory. For example, suppose that the
           current working directory is `/home` and you issued `cd /` to change to the root
-          directory. Then, `cd -` should switch back to use the macros in `msgs.h` to the `/home`
-          directory.
+          directory. Then, `cd -` should switch back to the `/home` directory.
         * You may find the `getuid()` and `getpwuid()` functions useful. They allow you to gather
           useful information about the current user.
     * `help`: Display help information on internal commands.
