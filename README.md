@@ -166,7 +166,7 @@ The second task is to implement a shell prompt and some internal commands.
     * A user can press `CTRL-C` anytime and interrupt system calls that are being executed. Thus,
       you need to properly check the return value of a system call to check if there was an error
       and also check `errno` to check which error it was. More specifically, you need to understand
-      which value `errno` is, if the error was caused by `SIGINT`. You need to handle `SIGINT`
+      which value `errno` gets, if the error is caused by `SIGINT`. You need to handle `SIGINT`
       errors differently from other errors.
 
 ## Task 2: History Feature
