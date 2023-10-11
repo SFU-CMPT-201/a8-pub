@@ -153,7 +153,7 @@ The second task is to implement a shell prompt and some internal commands.
           message. For example, if the command is `cd`, print out `cd: change the current
           directory`.
         * If the first argument is not an internal command, print out the program name and the help
-          message. For example, if argument is `ls`, print out `ls: external command or
+          message. For example, if the argument is `ls`, print out `ls: external command or
           application`.
         * If there is more than one argument, display this error message: `help: too many
           arguments`.
