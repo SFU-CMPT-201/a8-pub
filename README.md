@@ -174,7 +174,7 @@ The second task is to implement a shell prompt and some internal commands.
 The next task is to modify your shell to provide a history feature that allows the user access up to
 the 10 most recently entered commands. Start numbering the user's commands at 0 and increment for
 each command entered. These numbers will grow past 9. For example, if the user has entered 35
-commands, then the most recent 10 will be numbered 15 through 34. For all error messages, use the
+commands, then the most recent 10 will be numbered 25 through 34. For all error messages, use the
 macros defined in `msgs.h` for correct formatting.
 
 * First, implement an internal command `history` which displays the 10 most recent commands executed
