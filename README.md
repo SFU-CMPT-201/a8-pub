@@ -45,6 +45,8 @@ CMake as the build system. We expect the following code structure.
   $ export CXX=$(which clang++)
   ```
 
+  In fact, this needs to be done every time you log in. In order to automate this, open your
+  `~/.zshrc` and add the above two commands at the end.
 * `gtest/` contains the test cases for grading. We use [Google
   Test](https://github.com/google/googletest/tree/main) to develop and run the test cases.
 * `CMakeLists.txt` includes directives to compile the test cases. However, this `CMakeLists.txt` is

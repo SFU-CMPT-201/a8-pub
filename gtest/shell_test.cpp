@@ -785,8 +785,6 @@ TEST_F(ShellTest, CorrectCommandNumber) {
     exit(1);
   std::string output = getOutput();
 
-  std::cout << output << std::endl;
-
   std::istringstream iss(output);
   std::string line;
   bool correctNumbering = true;
@@ -948,9 +946,7 @@ TEST_F(ShellTest, IllegalHistoryCommand) {
   int status4 = writeInput("history\n", true);
   if (status4 == -1)
     exit(1);
-  std::string out = getOutput();
-
-  std::cout << out << std::endl;
+  std::string out = getErrOutput();
 
   std::istringstream is(out);
   std::string out_line;
@@ -976,7 +972,7 @@ TEST_F(ShellTest, IllegalNthCommand) {
   int status3 = writeInput("!-1\n", false);
   if (status3 == -1)
     exit(1);
-  std::string output = getOutput();
+  std::string output = getErrOutput();
 
   std::istringstream iss(output);
   std::string line;
@@ -1126,9 +1122,6 @@ TEST_F(ShellTest, ChangeToHomeDirectory) {
   if (status2 == -1)
     exit(1);
   output = getOutput();
-
-  std::cout << output << std::endl;
-  std::cout << expected_output << std::endl;
 
   adjustScore(output.find(expected_output) != std::string::npos, 4,
               internalScore);
