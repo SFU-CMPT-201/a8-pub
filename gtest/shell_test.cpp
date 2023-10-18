@@ -930,7 +930,7 @@ TEST_F(ShellTest, IllegalHistoryCommand) {
   int status3 = writeInput("!hi\n", false);
   if (status3 == -1)
     exit(1);
-  std::string output = getOutput();
+  std::string output = getErrOutput();
 
   std::istringstream iss(output);
   std::string line;
@@ -946,7 +946,7 @@ TEST_F(ShellTest, IllegalHistoryCommand) {
   int status4 = writeInput("history\n", true);
   if (status4 == -1)
     exit(1);
-  std::string out = getErrOutput();
+  std::string out = getOutput();
 
   std::istringstream is(out);
   std::string out_line;
