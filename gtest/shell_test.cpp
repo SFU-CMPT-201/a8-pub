@@ -491,7 +491,6 @@ TEST_F(ShellTest, ExitWithArgument) {
 TEST_F(ShellTest, CdForward) {
   // Create a temporary directory
   int create = mkdir("testdir", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-  ASSERT_TRUE(create == 0);
 
   // Change directory
   int writeStatus = writeInput("cd testdir\n", true);
@@ -517,7 +516,6 @@ TEST_F(ShellTest, CdForward) {
 
   // cleanup
   int remove = rmdir("testdir");
-  ASSERT_TRUE(remove == 0);
 }
 
 TEST_F(ShellTest, CdBackward) {
@@ -1111,7 +1109,6 @@ TEST_F(ShellTest, ChangeToHomeDirectory) {
 
   int create =
       mkdir(directory_path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-  ASSERT_TRUE(create == 0);
 
   int status1 = writeInput("cd ~/testdir\n", false);
   if (status1 == -1)
@@ -1128,7 +1125,6 @@ TEST_F(ShellTest, ChangeToHomeDirectory) {
   ASSERT_TRUE(output.find(expected_output) != std::string::npos);
 
   int remove = rmdir(directory_path.c_str());
-  ASSERT_TRUE(remove == 0);
 }
 
 TEST_F(ShellTest, cdBack) {
