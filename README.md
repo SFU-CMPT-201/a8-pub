@@ -142,8 +142,8 @@ The second task is to implement a shell prompt and some internal commands.
       more than one argument, abort the operation and print out this error message: `cd: too many
       arguments`. Additionally, implement the following features:
         * Change to the home directory if no argument is provided.
-        * Support `~` for the home folder. For example, `cd ~/cmpt201` should change to the
-          `cmpt201` directory under the current user's home directory. Issuing `cd ~` should switch
+        * Support `~` for the home folder. For example, `cd ~/tmp` should change to the
+          `tmp` directory under the current user's home directory. Issuing `cd ~` should switch
           to the home directory.
         * Support `-` for changing back to the previous directory. For example, suppose that the
           current working directory is `/home` and you issued `cd /` to change to the root
