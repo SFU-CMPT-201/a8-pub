@@ -99,6 +99,8 @@ There are a few things to keep in mind.
 
   Use the `getcwd()` function to get the current directory. If `getcwd()` returns an error, display
   this error message: `shell: unable to get current directory`.
+* When a user enters a command, your shell needs to handle it properly. `strtok_r()` function from
+  might be helpful. Read the manpage for it.
 * For foreground execution, you need to wait for the exact process you fork and not for any other
   processes.
 * Since we do not wait for a background process to terminate, it can become a zombie process (where
