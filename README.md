@@ -14,7 +14,18 @@ There are three mandatory features that you will need to implement:
 * Implement some internal commands.
 * Implement a history feature.
 
-Before you start the assignment, make sure you `record`.
+Before you start the assignment, read this document in its entirety and understand it first. Unlike
+the assignments you probably did in your intro programming courses, there is no step-by-step guide
+in this assignment. It is *your responsibility* to understand what needs to be done and *design*
+the software properly that implements everything described in this document. This means that before
+even writing any code, you need to think about the necessary components you need to implement and
+also come up with your own step-by-step process. Write down your understanding of what needs to
+be implemented and how you're going to implement them. In addition, hand-draw diagrams that
+represent various components that you need and how they are related to each other. Note that you
+can learn how to design software more in CMPT 276. But you do not need that background in our
+assignments.
+
+Lastly, make sure you `record` your entire work session(s).
 
 ## Code Structure, CMake, and the Grader
 
