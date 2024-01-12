@@ -124,7 +124,7 @@ There are a few things to keep in mind.
 
 ## Task 1: Internal Commands and SIGINT
 
-The second task is to implement a shell prompt and some internal commands.
+The second task is to implement some internal commands.
 
 * Your shell should implement a few internal commands described below. Internal commands are
   built-in commands of the shell itself, as opposed to a separate program that is executed. You
