@@ -22,7 +22,7 @@ You need to structure your code nicely according to what was discussed in A4. Al
 CMake as the build system. We expect the following code structure.
 
 ```bash
-  a9
+  a8
   |-- CMakeLists.txt
   |-- include
   |   \-- *.h
