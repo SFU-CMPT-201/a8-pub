@@ -59,7 +59,10 @@ CMake as the build system. We expect the following code structure.
   In fact, this needs to be done every time you log in. In order to automate this, open your
   `~/.zshrc` and add the above two commands at the end.
 * `gtest/` contains the test cases for grading. We use [Google
-  Test](https://github.com/google/googletest/tree/main) to develop and run the test cases.
+  Test](https://github.com/google/googletest/tree/main) to develop and run the test cases. You need
+  to run these test cases and pass them. If a test case fails, it is *your job* to figure out why.
+  This will often require you to look into the test case source code in `gtest/`. Though it is
+  written in C++, it is similar enough to C and you should be able to understand it.
 * `CMakeLists.txt` includes directives to compile the test cases. However, this `CMakeLists.txt` is
   not complete and `cmake` won't work. You need to add more directives to make it work. What you
   have learned from A4 should be enough to do it.
