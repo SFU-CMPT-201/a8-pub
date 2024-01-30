@@ -46,10 +46,10 @@ CMake as the build system. We expect the following code structure.
 * `include/` contains a header file already. You will use the header file for this assignment. Also,
   you need to add your own header files there.
 * You need to create `src/` and add all your `.c` files.
-* You need to make sure that you use the correct C and C++ compilers with CMake. As you know
-  already, we use `clang` in this course, and the commands below set the C and C++ compilers for
-  CMake to `clang` and `clang++`. What they do is setting the environment variables `CC` and `CXX`,
-  which various programs commonly use to find the C and C++ compilers.
+* As we mentioned before, you need to make sure that you use the correct C and C++ compilers with
+  CMake. As you know already, we use `clang` in this course, and the commands below set the C and
+  C++ compilers for CMake to `clang` and `clang++`. What they do is setting the environment
+  variables `CC` and `CXX`, which various programs commonly use to find the C and C++ compilers.
 
   ```bash
   $ export CC=$(which clang)
