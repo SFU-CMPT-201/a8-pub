@@ -67,7 +67,9 @@ CMake as the build system. We expect the following code structure.
   not complete and `cmake` won't work. You need to add more directives to make it work. What you
   have learned from A4 should be enough to do it.
 * After you make `cmake` work, you can run the executable it generates to run the test cases. At the
-  end of each run, you will see how many points you get.
+  end of each run, you will see how many points you get. We use your `CMakeLists.txt` to generate
+  this executable and run it for grading (though exact test cases might differ as explained below).
+  Thus, you need to make sure that it works correctly.
 * The test cases expect that there is an executable named `shell` in the build directory. That is
   the executable that you need to produce for your shell. Thus, you need to edit `CMakeLists.txt` to
   generate `shell` from your code. You can use `shell` for your own manual testing during
