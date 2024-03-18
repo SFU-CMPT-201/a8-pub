@@ -69,7 +69,7 @@ CMake as the build system. We expect the following code structure.
 * After you make `cmake` work, you can run the executable it generates to run the test cases. At the
   end of each run, you will see how many points you get. We use your `CMakeLists.txt` to generate
   this executable and run it for grading (though exact test cases might differ as explained below).
-  Thus, you need to make sure that it works correctly.
+  Thus, you need to make sure that it gets generated and works correctly.
 * The test cases expect that there is an executable named `shell` in the build directory. That is
   the executable that you need to produce for your shell. Thus, you need to edit `CMakeLists.txt` to
   generate `shell` from your code. You can use `shell` for your own manual testing during
@@ -269,6 +269,8 @@ macros defined in `msgs.h` for correct formatting.
 ## Grading
 
 * Code that does not compile with CMake gets a 0.
+* Code that does not generate all the required executables (the test executable and `shell`) gets a
+  0.
 * Memory issues have a penalty of -10 pts.
 * A wrong code directory structure has a penalty of -10 pts.
 * Distribution
