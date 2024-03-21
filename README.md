@@ -260,8 +260,9 @@ macros defined in `msgs.h` for correct formatting.
 
 * Your code must not have any memory leaks or memory access errors. Use appropriate sanitizers and
   test your code to make sure you do not have any memory issues. Make sure you also use the debug
-  option enabled in `CMakeLists.txt` to compile your code with debug information. You should remove
-  the debug option when you submit your code.
+  option enabled in `CMakeLists.txt` to compile your code with debug information for testing.
+  However, your code should work without the debug option as well. You should remove the debug
+  option when you submit your code.
 * Your child processes may exit without freeing all their memory. You do not need to handle such
   cases.
 * You do not need to support either `>` (output redirection) or `|` (pipe).
